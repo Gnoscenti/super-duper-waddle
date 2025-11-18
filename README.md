@@ -299,3 +299,8 @@ When you finish scaffolding, summarize:
 - Any assumptions made
 
 End summary with: “BUILD COMPLETE: AGENTOS-LISTING-COPY MVP READY”.
+
+## Implementation Status
+
+- **Stage 1 (this commit):** Next.js + TypeScript scaffold with Tailwind, landing page, `/app` wizard UI, stubbed API routes, and placeholder lib helpers for OpenAI, Supabase, Stripe, and credit handling.
+- **Stage 2 (planned):** Wire real OpenAI generation, Supabase auth/DB, credit consumption, Stripe Checkout/webhooks, and replace all placeholder responses per the spec above.
