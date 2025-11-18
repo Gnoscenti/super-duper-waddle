@@ -1,4 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { checkRateLimit, getClientIp } from '@/lib/rateLimit';
+import { getRemainingCredits } from '@/lib/credits';
 
 interface GeneratePayload {
   address: string;
@@ -18,7 +20,12 @@ interface GeneratePayload {
 
 const REQUIRED_FIELDS: Array<keyof GeneratePayload> = ['address', 'propertyType'];
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
+// Rate limit configuration per README spec:
+// - Guest: 2 generations per 24 hours per IP
+const GUEST_RATE_LIMIT = 2;
+const GUEST_WINDOW_MS = 24 * 60 * 60 * 1000; // 24 hours
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
     return res.status(405).json({ error: 'Method not allowed' });
@@ -29,6 +36,35 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 
   if (missingFields.length > 0) {
     return res.status(400).json({ error: `Missing required fields: ${missingFields.join(', ')}` });
+  }
+
+  // TODO: Stage 2 – Extract userId from session/auth when Supabase is wired
+  const userId = undefined; // Placeholder for authenticated user ID
+
+  // Check credits for authenticated users
+  if (userId) {
+    const { plan, remaining } = await getRemainingCredits(userId);
+    
+    if (remaining <= 0) {
+      return res.status(429).json({ 
+        error: 'No credits remaining', 
+        plan,
+        remaining: 0
+      });
+    }
+  } else {
+    // Guest user: apply IP-based rate limiting
+    const clientIp = getClientIp(req);
+    const rateLimit = checkRateLimit(clientIp, GUEST_RATE_LIMIT, GUEST_WINDOW_MS);
+    
+    if (!rateLimit.allowed) {
+      const resetDate = new Date(rateLimit.resetAt);
+      return res.status(429).json({ 
+        error: 'Rate limit exceeded. Guest users are limited to 2 generations per 24 hours.',
+        remaining: rateLimit.remaining,
+        resetAt: resetDate.toISOString()
+      });
+    }
   }
 
   // TODO: Stage 2 – replace with OpenAI call and Supabase credit enforcement per README spec.
