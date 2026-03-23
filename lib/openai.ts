@@ -65,9 +65,24 @@ export async function generateListingCopy(input: ListingInput): Promise<ListingO
       { role: 'system', content: SYSTEM_PROMPT },
       {
         role: 'user',
-        content: `Generate MLS description, three social captions, and a 30-second vertical video script as JSON using this property data: ${JSON.stringify(
-          input,
-        )}`,
+        content: `Using the following property data, generate:
+- One MLS-style property description.
+- Exactly three social media captions.
+- A ~30-second vertical video script, as an ordered list of lines.
+
+You must respond with a single JSON object with exactly these top-level keys and structure:
+{
+  "description": string,        // 2-4 paragraphs of MLS-ready copy in plain text
+  "captions": string[],         // exactly 3 concise social media captions
+  "videoScript": string[]       // ordered lines of the video script, each line a string
+}
+
+Requirements:
+- Do not include any additional top-level keys.
+- Do not wrap the JSON in markdown or explanation text.
+- All array items must be plain strings (no nested objects).
+
+Property data (JSON): ${JSON.stringify(input)}`,
       },
     ],
   });
