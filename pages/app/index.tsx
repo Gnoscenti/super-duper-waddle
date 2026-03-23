@@ -78,14 +78,16 @@ export default function AppWizardPage() {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to generate listing copy.');
+        const errorBody = await response.json().catch(() => null);
+        const message = errorBody?.error || 'Failed to generate listing copy.';
+        throw new Error(message);
       }
 
       const data: ListingResults = await response.json();
       setResults(data);
     } catch (err) {
       console.error(err);
-      setError('Generation failed. Please try again once Stage 2 wiring is complete.');
+      setError(err instanceof Error ? err.message : 'Generation failed. Please try again.');
       setResults(initialResults);
     } finally {
       setIsLoading(false);
@@ -128,9 +130,7 @@ export default function AppWizardPage() {
           <div className="space-y-4">
             {error && <p className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-600">{error}</p>}
             <ResultsPanel
-              description={
-                results.description || 'Dummy MLS description for now. TODO: replace with OpenAI output (Stage 2).'
-              }
+              description={results.description || 'No description generated yet.'}
               captions={
                 results.captions.length > 0
                   ? results.captions
