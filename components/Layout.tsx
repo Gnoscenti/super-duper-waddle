@@ -27,28 +27,29 @@ export default function Layout({ children }: LayoutProps) {
             </Link>
           </nav>
 
-          {/* Mobile hamburger */}
+          {/* Mobile hamburger button */}
           <button
             type="button"
-            className="sm:hidden flex flex-col gap-1.5 p-2 rounded-md text-slate-600 hover:text-slate-900"
-            aria-label="Toggle menu"
+            className="sm:hidden flex flex-col justify-center items-center w-9 h-9 gap-1.5 rounded-md hover:bg-slate-100"
+            aria-label="Toggle navigation menu"
+            aria-expanded={menuOpen}
             onClick={() => setMenuOpen((prev) => !prev)}
           >
-            <span className={`block h-0.5 w-6 bg-current transition-transform ${menuOpen ? 'translate-y-2 rotate-45' : ''}`} />
-            <span className={`block h-0.5 w-6 bg-current transition-opacity ${menuOpen ? 'opacity-0' : ''}`} />
-            <span className={`block h-0.5 w-6 bg-current transition-transform ${menuOpen ? '-translate-y-2 -rotate-45' : ''}`} />
+            <span className={`block h-0.5 w-5 bg-slate-700 transition-transform duration-200 ${menuOpen ? 'translate-y-2 rotate-45' : ''}`} />
+            <span className={`block h-0.5 w-5 bg-slate-700 transition-opacity duration-200 ${menuOpen ? 'opacity-0' : ''}`} />
+            <span className={`block h-0.5 w-5 bg-slate-700 transition-transform duration-200 ${menuOpen ? '-translate-y-2 -rotate-45' : ''}`} />
           </button>
         </div>
 
-        {/* Mobile menu dropdown */}
+        {/* Mobile dropdown menu */}
         {menuOpen && (
-          <nav className="sm:hidden border-t border-slate-100 bg-white/95 px-4 py-3 flex flex-col gap-3 text-sm font-medium">
-            <Link href="/" className="text-slate-700 hover:text-slate-900" onClick={() => setMenuOpen(false)}>
+          <nav className="sm:hidden border-t bg-white px-6 py-4 flex flex-col gap-3 text-sm font-medium text-slate-600">
+            <Link href="/" className="hover:text-slate-900" onClick={() => setMenuOpen(false)}>
               Home
             </Link>
             <Link
               href="/app"
-              className="rounded-full bg-brand-600 px-4 py-2 text-white text-center hover:bg-brand-500"
+              className="w-full rounded-full bg-brand-600 px-4 py-2 text-center text-white hover:bg-brand-500"
               onClick={() => setMenuOpen(false)}
             >
               Launch app
