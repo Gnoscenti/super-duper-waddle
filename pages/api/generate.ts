@@ -61,6 +61,10 @@ function validateRequiredNumber(value: unknown, fieldName: string, errors: strin
   return parsed;
 }
 
+function getOptionalString(value: unknown, fallback: string): string {
+  return typeof value === 'string' && value.trim().length > 0 ? value.trim() : fallback;
+}
+
 // Rate limit configuration per README spec:
 // - Guest: 2 generations per 24 hours per IP
 const GUEST_RATE_LIMIT = 2;
@@ -80,12 +84,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const beds = validateRequiredNumber(payload.beds, 'beds', errors);
   const baths = validateRequiredNumber(payload.baths, 'baths', errors);
   const livingSqft = validateRequiredNumber(payload.livingArea, 'livingArea', errors);
-  const viewType =
-    typeof payload.viewType === 'string' && payload.viewType.trim().length > 0 ? payload.viewType.trim() : 'None';
-  const neighborhoodVibe =
-    typeof payload.neighborhoodVibe === 'string' && payload.neighborhoodVibe.trim().length > 0
-      ? payload.neighborhoodVibe.trim()
-      : 'Neutral';
+  const viewType = getOptionalString(payload.viewType, 'None');
+  const neighborhoodVibe = getOptionalString(payload.neighborhoodVibe, 'Neutral');
 
   if (errors.length > 0 || !address || !propertyType || beds === null || baths === null || livingSqft === null) {
     return res.status(400).json({ error: `Missing or invalid fields: ${[...new Set(errors)].join(', ')}` });
@@ -106,6 +106,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
   } else {
     const clientIp = getClientIp(req);
+    if (!clientIp) {
+      return res.status(400).json({ error: 'Unable to determine client IP for rate limiting.' });
+    }
     const rateLimit = checkRateLimit(clientIp, GUEST_RATE_LIMIT, GUEST_WINDOW_MS);
 
     if (!rateLimit.allowed) {
