@@ -1,3 +1,5 @@
+import type { NextApiRequest } from 'next';
+
 // Simple in-memory rate limiter for guest users (IP-based)
 // In production, this should use Redis or a persistent store
 
@@ -7,19 +9,26 @@ interface RateLimitEntry {
 }
 
 const rateLimitStore = new Map<string, RateLimitEntry>();
+const PRUNE_INTERVAL_MS = 60 * 60 * 1000; // 1 hour
+let lastPrunedAt = 0;
 
-// Clean up old entries periodically
-setInterval(() => {
-  const now = Date.now();
+function pruneExpiredEntries(now: number): void {
+  if (now - lastPrunedAt < PRUNE_INTERVAL_MS) {
+    return;
+  }
+
   for (const [key, entry] of rateLimitStore.entries()) {
     if (entry.resetAt < now) {
       rateLimitStore.delete(key);
     }
   }
-}, 60 * 60 * 1000); // Clean up every hour
+
+  lastPrunedAt = now;
+}
 
 export function checkRateLimit(identifier: string, limit: number, windowMs: number): { allowed: boolean; remaining: number; resetAt: number } {
   const now = Date.now();
+  pruneExpiredEntries(now);
   const entry = rateLimitStore.get(identifier);
 
   // If no entry or expired, create new one
@@ -39,18 +48,19 @@ export function checkRateLimit(identifier: string, limit: number, windowMs: numb
   return { allowed: true, remaining: limit - entry.count, resetAt: entry.resetAt };
 }
 
-export function getClientIp(req: { headers: Record<string, string | string[] | undefined> }): string {
+export function getClientIp(req: NextApiRequest): string | null {
   // Try common headers for IP address
   const forwarded = req.headers['x-forwarded-for'];
   if (forwarded) {
     const ip = typeof forwarded === 'string' ? forwarded.split(',')[0] : forwarded[0];
-    return ip?.trim() || 'unknown';
+    return ip?.trim() || null;
   }
 
   const realIp = req.headers['x-real-ip'];
   if (realIp) {
-    return typeof realIp === 'string' ? realIp : realIp[0] || 'unknown';
+    const ip = typeof realIp === 'string' ? realIp : realIp[0];
+    return ip?.trim() || null;
   }
 
-  return 'unknown';
+  return req.socket.remoteAddress?.trim() || null;
 }

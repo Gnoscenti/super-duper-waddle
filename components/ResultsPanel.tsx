@@ -23,7 +23,7 @@ export default function ResultsPanel({ description, captions, videoScript, isLoa
   if (isLoading) {
     return (
       <div className="rounded-2xl border border-slate-200 bg-white p-8 text-center">
-        <p className="text-sm font-medium text-slate-600">Generating listing package… (stubbed response for Stage 1)</p>
+        <p className="text-sm font-medium text-slate-600">Generating listing package…</p>
       </div>
     );
   }
