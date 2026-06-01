@@ -3,8 +3,8 @@ import PricingCards from '../components/PricingCards';
 
 export default function HomePage() {
   return (
-    <div className="mx-auto max-w-6xl px-6 py-16">
-      <section className="rounded-3xl bg-gradient-to-r from-brand-600 to-indigo-500 px-8 py-16 text-white shadow-xl">
+    <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-16">
+      <section className="rounded-3xl bg-gradient-to-r from-brand-600 to-indigo-500 px-6 py-10 text-white shadow-xl sm:px-8 sm:py-16">
         <p className="text-sm uppercase tracking-wide text-white/80">AgentOS Listing Copy · MVP</p>
         <h1 className="mt-4 text-4xl font-bold leading-tight sm:text-5xl">
           Turn any address into a full listing package in seconds

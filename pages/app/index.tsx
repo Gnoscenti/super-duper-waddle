@@ -103,8 +103,8 @@ export default function AppWizardPage() {
   };
 
   return (
-    <div className="mx-auto max-w-5xl px-6 py-12">
-      <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+    <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 sm:py-12">
+      <div className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
         <div className="mb-8">
           <Stepper currentStep={currentStep} />
         </div>

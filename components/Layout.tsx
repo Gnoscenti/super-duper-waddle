@@ -12,7 +12,7 @@ export default function Layout({ children }: LayoutProps) {
   return (
     <div className="min-h-screen flex flex-col">
       <header className="border-b bg-white/70 backdrop-blur sticky top-0 z-30">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6">
           <Link href="/" className="text-lg font-semibold text-brand-600">
             AgentOS Listing Copy
           </Link>
@@ -29,6 +29,7 @@ export default function Layout({ children }: LayoutProps) {
 
           {/* Mobile hamburger button */}
           <button
+            type="button"
             className="sm:hidden flex flex-col justify-center items-center w-9 h-9 gap-1.5 rounded-md hover:bg-slate-100"
             aria-label="Toggle navigation menu"
             aria-expanded={menuOpen}
@@ -58,7 +59,7 @@ export default function Layout({ children }: LayoutProps) {
       </header>
       <main className="flex-1 bg-slate-50">{children}</main>
       <footer className="border-t bg-white">
-        <div className="mx-auto flex max-w-6xl flex-col gap-2 px-6 py-6 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mx-auto flex max-w-6xl flex-col gap-2 px-4 py-6 text-sm text-slate-500 sm:px-6 sm:flex-row sm:items-center sm:justify-between">
           <p>© {new Date().getFullYear()} AgentOS. All rights reserved.</p>
           <p>Stage 1 scaffolding — TODO: wire Supabase + Stripe + OpenAI.</p>
         </div>

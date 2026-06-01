@@ -1,11 +1,11 @@
 {
   "name": "AgentOS Listing Copy",
   "short_name": "AgentOS",
-  "description": "AI-powered real estate listing copy generator",
+  "description": "Turn any address into a full listing package in seconds",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#f8fafc",
-  "theme_color": "#2563eb",
+  "theme_color": "#4338ca",
   "orientation": "portrait-primary",
   "icons": [
     {
